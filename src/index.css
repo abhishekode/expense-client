@@ -1,0 +1,30 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,300;0,400;1,200&display=swap");
+
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+.modal-open {
+  overflow: hidden;
+}
+
+/* Custom CSS for scrollbar */
+::-webkit-scrollbar {
+  width: 1px;
+  height: 0px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: black;
+}
+
+.toastProgress {
+  background: #dd5902 !important;
+}
