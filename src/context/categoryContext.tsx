@@ -1,6 +1,6 @@
 import { ICategory } from 'Interfaces/common';
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { getAllCategories } from 'utils/api.method';
+import { CategoryAPI } from 'utils/api.method';
 
 
 // Define the type for the product context
@@ -20,7 +20,7 @@ export const CategoryProvider: React.FC<ProductProviderProps> = ({ children }) =
 
   const fetchCategories = async () => {
     try {
-      const res = await getAllCategories();
+      const res = await CategoryAPI.getAllCategories();
       if (res.status) {
         setCategories(res.data.result || []);
       }

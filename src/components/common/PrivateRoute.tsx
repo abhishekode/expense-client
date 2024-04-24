@@ -14,9 +14,6 @@ const PrivateRoute = () => {
 	if (location.pathname.startsWith('/admin/') && currentUser?.role !== UserRole.Admin) {
 		return <Navigate to="/unauthorized" replace />
 	}
-	if (location.pathname.startsWith('/user/') && currentUser?.role !== UserRole.User) {
-		return <Navigate to="/unauthorized" replace />
-	}
 
 	return currentUser?.token ? <Outlet /> : <Navigate to="/auth" state={{ from: location }} replace />
 }

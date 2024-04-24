@@ -1,14 +1,14 @@
-import React from 'react';
-import { GrClose } from 'react-icons/gr';
-import Modal from 'react-modal';
+import React from "react";
+import { GrClose } from "react-icons/gr";
+import Modal from "react-modal";
 
 const customStyles = {
   content: {
-    background: '#f5f2f2',
-    height: 'auto',
+    background: "#f5f2f2",
+    height: "auto",
   },
   overlay: {
-    background: 'rgba(0, 0, 0, 0.5)',
+    background: "rgba(0, 0, 0, 0.5)",
     zIndex: 999,
   },
 };
@@ -22,7 +22,24 @@ interface ModalProps {
 
 // Modal.setAppElement('#root')
 
-const CustomModal: React.FC<ModalProps> = ({ isOpen, toggleModal, children, heading }) => {
+const CustomModal: React.FC<ModalProps> = ({
+  isOpen,
+  toggleModal,
+  children,
+  heading,
+}) => {
+
+  React.useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
+ 
 
   return (
     <Modal
@@ -34,16 +51,15 @@ const CustomModal: React.FC<ModalProps> = ({ isOpen, toggleModal, children, head
       className="md:w-[30rem] w-[90%] max-h-screen min-h-screen overflow-y-auto h-auto right-0 absolute z-50"
     >
       <div className="flex justify-between py-4 bg-white mb-1 rounded px-3">
-        <p className="text-xl capitalize font-semibold">
-          {heading}
-        </p>
+        <p className="text-xl capitalize font-semibold">{heading}</p>
         <div className="cursor-pointer" onClick={toggleModal}>
-          <GrClose fill='white' className='text-xl capitalize font-extrabold ' />
+          <GrClose
+            fill="white"
+            className="text-xl capitalize font-extrabold "
+          />
         </div>
       </div>
-      <div className="px-2">
-        {children}
-      </div>
+      <div className="px-2">{children}</div>
     </Modal>
   );
 };

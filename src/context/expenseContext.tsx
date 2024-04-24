@@ -1,6 +1,6 @@
 import { GetAllExpensesResponse, QueryExpenseRequest } from 'Interfaces/auth.api';
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { getAllExpenses } from 'utils/api.method';
+import { ExpenseAPI } from 'utils/api.method';
 
 // Define the type for the expense context
 interface ExpenseContextType {
@@ -19,7 +19,7 @@ export const ExpenseProvider: React.FC<ExpenseProviderProps> = ({ children }) =>
 
   const fetchExpenses = async (query: QueryExpenseRequest) => {
     try {
-      const res = await getAllExpenses(query);
+      const res = await ExpenseAPI.getAllExpenses(query);
       if (res.status) {
         setExpenses(res.data.result);
       }

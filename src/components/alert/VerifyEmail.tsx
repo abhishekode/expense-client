@@ -5,7 +5,7 @@ import { FaPersonCircleQuestion } from "react-icons/fa6";
 import { GrClose } from "react-icons/gr";
 import { MdAlternateEmail } from "react-icons/md";
 import { toast } from "react-toastify";
-import { resendVerifyOTP, verifyOTP } from "utils/api.method";
+import { AuthAPI } from "utils/api.method";
 
 interface VerifyEmailOtpRequest {
   email: string;
@@ -31,7 +31,7 @@ const VerifyEmail: React.FC<VerifyEmailProps> = (props) => {
   const onSubmit = async (data: VerifyEmailOtpRequest) => {
     try {
       setIsVerifying(true);
-      const res = await verifyOTP({ email, otp: data.otp });
+      const res = await AuthAPI.verifyOTP({ email, otp: data.otp });
       if (res.status) {
         toast.success(res.data.message);
         toggleModel();
@@ -47,7 +47,7 @@ const VerifyEmail: React.FC<VerifyEmailProps> = (props) => {
   const handleResendOTP = async () => {
     try {
       setIsReSentOtp(true);
-      const res = await resendVerifyOTP(email);
+      const res = await AuthAPI.resendVerifyOTP(email);
       if (res.status) {
         toast.success(res.data.message);
       }

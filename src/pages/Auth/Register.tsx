@@ -4,7 +4,7 @@ import { MdAlternateEmail, MdPhoneIphone } from "react-icons/md";
 import { CgNametag } from "react-icons/cg";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
-import { registerUser } from "utils/api.method";
+import { AuthAPI } from "utils/api.method";
 import { NewUserRequest } from "Interfaces/auth.api";
 import VerifyEmail from "components/alert/VerifyEmail";
 
@@ -24,14 +24,14 @@ const Register: React.FC<RegisterProps> = ({ setActiveTab }) => {
 
   const onSubmit = async (data: NewUserRequest) => {
     try {
-      const res = await registerUser(data);
+      const res = await AuthAPI.registerUser(data);
       if (res.status) {
         toast.success("User created successfully!!");
         setIsVerifyModel(true);
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      toast.error(error?.response.data.message || "Something went wrong");
+      toast.error(error.message || "Something went wrong");
     }
   };
 

@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import axios from 'axios';
+import { CurrentUser } from 'Interfaces/common';
 import {
     LoginRequest,
     NewUserRequest,
@@ -6,61 +9,72 @@ import {
     CreateExpenseRequest,
     UpdateExpenseRequest,
     ChangePasswordRequest,
-    CreateCategoryRequest,
-    UpdateCategoryRequest,
     UpdateUserRequest,
     QueryExpenseRequest,
 } from 'Interfaces/auth.api';
-import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:5000/api/v1';
 
-// Create Axios instance with default configurations
 const api = axios.create({
     baseURL: API_BASE_URL,
 });
 
-// Add a request interceptor to include bearer token in the headers
-api.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem('accessToken'); // Assuming the token is stored in localStorage
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
-
-// Users
-export const registerUser = (userData: NewUserRequest) => api.post('/users/register', userData);
-export const loginUser = (loginData: LoginRequest) => api.post('/users/login', loginData);
-export const forgotPassword = (email: string) => api.post('/users/forgot-password', { email });
-export const resendForgotPasswordOTP = (email: string) => api.post('/users/resend-forgot-password-otp', { email });
-export const resendVerifyOTP = (email: string) => api.post('/users/resend-otp', { email });
-export const verifyOTP = (otpData: VerifyEmailOtpRequest) => api.post('/users/verify-otp', otpData);
-export const changeForgotPassword = (passwordData: ChangeForgotPasswordRequest) => api.put('/users/change-forgot-password', passwordData);
-export const changePassword = (passwordData: ChangePasswordRequest) => api.put('/users/change-password', passwordData);
-export const updateAccount = (userData: UpdateUserRequest) => api.put('/users/account', userData);
-export const deactivateAccount = () => api.post('/users/deactivate-account');
-export const getUserProfile = () => api.get('/users/profile');
-
-// Category
-export const createCategory = (categoryData: CreateCategoryRequest) => api.post('/category', categoryData);
-export const getAllCategories = () => api.get('/category');
-export const getCategoryById = (id: string) => api.get(`/category/${id}`);
-export const updateCategory = (id: string, categoryData: UpdateCategoryRequest) => api.put(`/category/${id}`, categoryData);
-export const deleteCategory = (id: string) => api.delete(`/category/${id}`);
-
-// Expense
-export const createExpense = (expenseData: CreateExpenseRequest) => api.post('/expense', expenseData);
-export const getAllExpenses = (query: QueryExpenseRequest) => {
-    return api.get('/expense', { params: query });
+const getAccessToken = (): string => {
+    const user: CurrentUser | null = JSON.parse(localStorage.getItem('user') || '{}');
+    const token = user?.token || ''
+    return token;
 };
-export const getExpenseById = (id: string) => api.get(`/expense/${id}`);
-export const updateExpense = (id: string, expenseData: UpdateExpenseRequest) => api.patch(`/expense/${id}`, expenseData);
-export const deleteExpense = (id: string) => api.delete(`/expense/${id}`);
+
+const withAuthorization = {
+    headers: {
+        'Authorization': `Bearer ${getAccessToken()}`,
+    },
+};
+
+const withAuthorizationFormData = {
+    headers: {
+        'Authorization': `Bearer ${getAccessToken()}`,
+        'Content-Type': 'multipart/form-data',
+    },
+};
+
+const handleRequest = async (request: Promise<any>) => {
+    try {
+        const response = await request;
+        return response.data;
+    } catch (error: any) {
+        throw error.response ? error.response.data : error.message;
+    }
+};
+
+export const AuthAPI = {
+    registerUser: (userData: NewUserRequest) => handleRequest(api.post('/users/register', userData)),
+    loginUser: (loginData: LoginRequest) => handleRequest(api.post('/users/login', loginData)),
+    forgotPassword: (email: string) => handleRequest(api.post('/users/forgot-password', { email })),
+    resendForgotPasswordOTP: (email: string) => handleRequest(api.post('/users/resend-forgot-password-otp', { email })),
+    resendVerifyOTP: (email: string) => handleRequest(api.post('/users/resend-otp', { email })),
+    verifyOTP: (otpData: VerifyEmailOtpRequest) => handleRequest(api.post('/users/verify-otp', otpData)),
+    changeForgotPassword: (passwordData: ChangeForgotPasswordRequest) => handleRequest(api.put('/users/change-forgot-password', passwordData)),
+    changePassword: (passwordData: ChangePasswordRequest) => handleRequest(api.put('/users/change-password', passwordData, withAuthorization)),
+    updateAccount: (userData: UpdateUserRequest) => handleRequest(api.put('/users/account', userData, withAuthorizationFormData)),
+    deactivateAccount: () => handleRequest(api.post('/users/deactivate-account', {}, withAuthorization)),
+    getUserProfile: () => handleRequest(api.get('/users/profile', withAuthorization)),
+};
+
+export const CategoryAPI = {
+    createCategory: (categoryData: FormData) => handleRequest(api.post('/category', categoryData, withAuthorizationFormData)),
+    getAllCategories: () => handleRequest(api.get('/category')),
+    getCategoryById: (id: string) => handleRequest(api.get(`/category/${id}`)),
+    updateCategory: (id: string, categoryData: FormData) => handleRequest(api.put(`/category/${id}`, categoryData, withAuthorizationFormData)),
+    deleteCategory: (id: string) => handleRequest(api.delete(`/category/${id}`, withAuthorization)),
+};
+
+export const ExpenseAPI = {
+    createExpense: (expenseData: CreateExpenseRequest) => handleRequest(api.post('/expense', expenseData, withAuthorization)),
+    getAllExpenses: (query: QueryExpenseRequest) => handleRequest(api.get('/expense', { params: query, ...withAuthorization })),
+    getExpenseById: (id: string) => handleRequest(api.get(`/expense/${id}`, withAuthorization)),
+    updateExpense: (id: string, expenseData: UpdateExpenseRequest) => handleRequest(api.patch(`/expense/${id}`, expenseData, withAuthorizationFormData)),
+    deleteExpense: (id: string) => handleRequest(api.delete(`/expense/${id}`, withAuthorization)),
+};
 
 export default api;

@@ -5,7 +5,7 @@ import { MdAlternateEmail } from "react-icons/md";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { loginUser } from "utils/api.method";
+import { AuthAPI } from "utils/api.method";
 
 interface LoginState {
   email: string;
@@ -28,7 +28,7 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
 
   const onSubmit = async (data: LoginState) => {
     try {
-      const res = await loginUser(data);
+      const res = await AuthAPI.loginUser(data);
       if (res.status) {
         toast.success("user logged-in successfully");
         localStorage.setItem("user", JSON.stringify(res.data.result));
@@ -37,7 +37,7 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      toast.error(error?.response.data.message || "Something went wrong");
+      toast.error(error.message || "Something went wrong");
     }
   };
 
