@@ -1,25 +1,44 @@
-import React from "react";
-import Layout from "components/layout";
-import { ToastContainer } from "react-toastify";
-import { TodoProvider } from "context/todoTaskContext";
-import { UserProvider } from "context/userContext";
-import { CategoryProvider } from "context/categoryContext";
-import { ExpenseProvider } from "context/expenseContext";
+import { useEffect, useState } from 'react';
+import { Route, Routes, useLocation } from 'react-router-dom';
+import Loader from './common/Loader';
+import PrivateRoute from './common/PrivateRoute';
+import { privateRoutes, publicRoutes } from './utils/app.route';
 
-const App = () => (
-  <TodoProvider>
-    <UserProvider>
-      <CategoryProvider>
-        <ExpenseProvider>
-          <ToastContainer
-            progressClassName="toastProgress"
-            position="top-center"
-          />
-          <Layout />
-        </ExpenseProvider>
-      </CategoryProvider>
-    </UserProvider>
-  </TodoProvider>
-);
+type RouteObject = {
+  path: string;
+  element: React.ReactNode;
+};
+
+function App() {
+  const [loading, setLoading] = useState<boolean>(true);
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 1000);
+  }, []);
+
+  const renderRoutes = (routes: RouteObject[]) => {
+    return routes.map((r: RouteObject) => (
+      <Route path={r.path} element={r.element} key={r.path} />
+    ));
+  };
+
+  return loading ? (
+    <Loader />
+  ) : (
+    <div className="min-h-screen">
+      <Routes>
+        <Route element={<PrivateRoute />}>
+          {renderRoutes(privateRoutes)}
+        </Route>
+        <Route>{renderRoutes(publicRoutes)}</Route>
+      </Routes>
+    </div>
+  );
+}
 
 export default App;

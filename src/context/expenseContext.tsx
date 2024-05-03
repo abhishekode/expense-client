@@ -1,6 +1,6 @@
-import { GetAllExpensesResponse, QueryExpenseRequest } from 'Interfaces/auth.api';
+import { GetAllExpensesResponse, QueryExpenseRequest } from '@/common/Interfaces/req.interface';
+import { ExpenseAPI } from '@/utils/api.method';
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { ExpenseAPI } from 'utils/api.method';
 
 // Define the type for the expense context
 interface ExpenseContextType {

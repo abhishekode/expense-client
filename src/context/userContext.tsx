@@ -1,4 +1,5 @@
-import { CurrentUser } from 'Interfaces/common';
+
+import { CurrentUser } from '@/common/Interfaces';
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 

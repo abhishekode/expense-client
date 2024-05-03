@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
-import { CurrentUser } from 'Interfaces/common';
 import {
     LoginRequest,
     NewUserRequest,
@@ -11,7 +10,8 @@ import {
     ChangePasswordRequest,
     UpdateUserRequest,
     QueryExpenseRequest,
-} from 'Interfaces/auth.api';
+} from '@/common/Interfaces/req.interface';
+import { CurrentUser } from '@/common/Interfaces';
 
 const API_BASE_URL = 'http://localhost:5000/api/v1';
 
@@ -71,9 +71,9 @@ export const CategoryAPI = {
 
 export const ExpenseAPI = {
     createExpense: (expenseData: CreateExpenseRequest) => handleRequest(api.post('/expense', expenseData, withAuthorization)),
-    getAllExpenses: (query: QueryExpenseRequest) => handleRequest(api.get('/expense', { params: query, ...withAuthorization })),
+    getAllExpenses: (query?: QueryExpenseRequest) => handleRequest(api.get('/expense', { params: query, ...withAuthorization })),
     getExpenseById: (id: string) => handleRequest(api.get(`/expense/${id}`, withAuthorization)),
-    updateExpense: (id: string, expenseData: UpdateExpenseRequest) => handleRequest(api.patch(`/expense/${id}`, expenseData, withAuthorizationFormData)),
+    updateExpense: (id: string, expenseData: UpdateExpenseRequest) => handleRequest(api.put(`/expense/${id}`, expenseData, withAuthorization)),
     deleteExpense: (id: string) => handleRequest(api.delete(`/expense/${id}`, withAuthorization)),
 };
 
