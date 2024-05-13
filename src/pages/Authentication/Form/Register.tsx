@@ -18,7 +18,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setRegisterState }) => {
     register,
     handleSubmit,
     formState: { errors },
-    getValues,
   } = useForm<NewUserRequest>();
   const [isPassword, setIsPassword] = React.useState<boolean>(true);
 
@@ -27,9 +26,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setRegisterState }) => {
       const res = await AuthAPI.registerUser(data);
       if (res.status) {
         toast.success('User created successfully!!');
-        const email = getValues('email');
         setRegisterState({
-          email: email,
+          email: data.email,
           isOtpSent: true,
         });
       }

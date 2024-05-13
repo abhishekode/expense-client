@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { TfiEmail } from 'react-icons/tfi';
 import { BiDialpad } from 'react-icons/bi';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 interface VerifyEmailOtpRequest {
   email: string;
@@ -16,24 +17,30 @@ interface VerifyEmailProps {
 
 const VerifyEmail: React.FC<VerifyEmailProps> = (props) => {
   const { email } = props;
+  console.log('props', props)
+  const navigate = useNavigate()
   const [isReSentOtp, setIsReSentOtp] = React.useState<boolean>(false);
   const [isVerifying, setIsVerifying] = React.useState<boolean>(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<VerifyEmailOtpRequest>();
+  } = useForm<VerifyEmailOtpRequest>({
+    defaultValues: email ? { email } : {}
+  });
 
   const onSubmit = async (data: VerifyEmailOtpRequest) => {
     try {
       setIsVerifying(true);
       const res = await AuthAPI.verifyOTP({ email, otp: data.otp });
       if (res.status) {
-        toast.success(res.data.message);
+        toast.success(res.message);
+        navigate('/auth/login')
+
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'An error occurred');
+      toast.error(error.message || 'An error occurred');
     } finally {
       setIsVerifying(false);
     }
@@ -44,11 +51,11 @@ const VerifyEmail: React.FC<VerifyEmailProps> = (props) => {
       setIsReSentOtp(true);
       const res = await AuthAPI.resendVerifyOTP(email);
       if (res.status) {
-        toast.success(res.data.message);
+        toast.success(res.message);
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'An error occurred');
+      toast.error(error.message || 'An error occurred');
     } finally {
       setIsReSentOtp(false);
     }
@@ -57,6 +64,7 @@ const VerifyEmail: React.FC<VerifyEmailProps> = (props) => {
   return (
     <>
       <div className="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2">
+        <div className="" onClick={()=> }>back</div>
         <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
           <span className="mb-1.5 block font-medium">Verify your email</span>
           <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
